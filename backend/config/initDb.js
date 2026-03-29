@@ -42,7 +42,7 @@ async function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS Allocations (
       id INT AUTO_INCREMENT PRIMARY KEY,
       student_id INT NOT NULL UNIQUE,
-      room_id INT NOT NULL UNIQUE,
+      room_id INT NOT NULL,
       CONSTRAINT fk_allocations_student
         FOREIGN KEY (student_id) REFERENCES Students(id)
         ON DELETE CASCADE
@@ -71,6 +71,20 @@ async function initializeDatabase() {
         ON DELETE SET NULL
         ON UPDATE CASCADE
     `);
+  }
+
+  const [roomUniqueIndexes] = await pool.query(`
+    SELECT INDEX_NAME
+    FROM INFORMATION_SCHEMA.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'Allocations'
+      AND COLUMN_NAME = 'room_id'
+      AND NON_UNIQUE = 0
+      AND INDEX_NAME <> 'PRIMARY'
+  `);
+
+  for (const index of roomUniqueIndexes) {
+    await pool.query(`ALTER TABLE Allocations DROP INDEX \`${index.INDEX_NAME}\``);
   }
 }
 

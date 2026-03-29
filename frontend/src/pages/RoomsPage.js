@@ -122,7 +122,9 @@ function RoomsPage() {
                   </span>
                 </div>
                 <p>{room.type} Room</p>
-                <small>{room.allocated_students} student(s) allocated</small>
+                <small>
+                  {room.allocated_students}/{room.capacity || 1} student(s) allocated
+                </small>
                 <p className="room-meta">
                   Warden: {room.warden_name ? `${room.warden_name} (${room.warden_phone})` : "Not Assigned"}
                 </p>

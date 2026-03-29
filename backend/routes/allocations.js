@@ -2,6 +2,11 @@ const express = require("express");
 const pool = require("../config/db");
 
 const router = express.Router();
+const ROOM_CAPACITY = {
+  Single: 1,
+  Double: 2,
+  Triple: 3,
+};
 
 router.post("/", async (req, res) => {
   const connection = await pool.getConnection();
@@ -32,9 +37,17 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ message: "Room not found." });
     }
 
-    if (roomRows[0].status === "Occupied") {
+    const room = roomRows[0];
+    const capacity = ROOM_CAPACITY[room.type] || 1;
+    const [allocationCountRows] = await connection.query(
+      "SELECT COUNT(*) AS total FROM Allocations WHERE room_id = ?",
+      [room_id]
+    );
+    const allocatedCount = allocationCountRows[0].total;
+
+    if (allocatedCount >= capacity) {
       await connection.rollback();
-      return res.status(400).json({ message: "Selected room is already occupied." });
+      return res.status(400).json({ message: "Selected room is already full." });
     }
 
     const [result] = await connection.query(
@@ -42,7 +55,9 @@ router.post("/", async (req, res) => {
       [student_id, room_id]
     );
 
-    await connection.query("UPDATE Rooms SET status = 'Occupied' WHERE id = ?", [room_id]);
+    const updatedCount = allocatedCount + 1;
+    const nextStatus = updatedCount >= capacity ? "Occupied" : "Available";
+    await connection.query("UPDATE Rooms SET status = ? WHERE id = ?", [nextStatus, room_id]);
 
     await connection.commit();
 

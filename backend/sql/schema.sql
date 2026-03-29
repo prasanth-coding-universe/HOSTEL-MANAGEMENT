@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Rooms (
 CREATE TABLE IF NOT EXISTS Allocations (
   id INT AUTO_INCREMENT PRIMARY KEY,
   student_id INT NOT NULL UNIQUE,
-  room_id INT NOT NULL UNIQUE,
+  room_id INT NOT NULL,
   CONSTRAINT fk_allocations_student
     FOREIGN KEY (student_id) REFERENCES Students(id)
     ON DELETE CASCADE

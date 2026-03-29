@@ -18,7 +18,9 @@ function AllocationPage() {
     ]);
 
     setStudents(studentsRes.data.filter((student) => !student.room_number));
-    setRooms(roomsRes.data.filter((room) => room.status === "Available"));
+    setRooms(
+      roomsRes.data.filter((room) => Number(room.allocated_students) < Number(room.capacity || 1))
+    );
     setAllocations(allocationsRes.data);
   };
 
@@ -82,7 +84,7 @@ function AllocationPage() {
                 <option value="">Select room</option>
                 {rooms.map((room) => (
                   <option key={room.id} value={room.id}>
-                    {room.room_number} ({room.type})
+                    {room.room_number} ({room.type}, {room.allocated_students}/{room.capacity})
                   </option>
                 ))}
               </select>

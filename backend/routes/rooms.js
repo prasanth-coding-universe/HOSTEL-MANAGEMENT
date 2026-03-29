@@ -2,6 +2,11 @@ const express = require("express");
 const pool = require("../config/db");
 
 const router = express.Router();
+const ROOM_CAPACITY = {
+  Single: 1,
+  Double: 2,
+  Triple: 3,
+};
 
 router.post("/", async (req, res) => {
   try {
@@ -54,7 +59,12 @@ router.get("/", async (_req, res) => {
        ORDER BY r.room_number ASC`
     );
 
-    return res.json(rows);
+    return res.json(
+      rows.map((room) => ({
+        ...room,
+        capacity: ROOM_CAPACITY[room.type] || 1,
+      }))
+    );
   } catch (error) {
     return res.status(500).json({ message: "Failed to fetch rooms.", error: error.message });
   }
