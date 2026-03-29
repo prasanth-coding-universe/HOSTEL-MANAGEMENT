@@ -8,7 +8,8 @@ function DashboardPage() {
     totalStudents: 0,
     totalRooms: 0,
     availableRooms: 0,
-    occupiedRooms: 0,
+    partiallyOccupiedRooms: 0,
+    fullyOccupiedRooms: 0,
     totalAllocations: 0,
   });
 
@@ -25,8 +26,13 @@ function DashboardPage() {
       setStats({
         totalStudents: studentsRes.data.length,
         totalRooms: rooms.length,
-        availableRooms: rooms.filter((room) => room.status === "Available").length,
-        occupiedRooms: rooms.filter((room) => room.status === "Occupied").length,
+        availableRooms: rooms.filter((room) => room.occupancy_state === "Available").length,
+        partiallyOccupiedRooms: rooms.filter(
+          (room) => room.occupancy_state === "Partially Occupied"
+        ).length,
+        fullyOccupiedRooms: rooms.filter(
+          (room) => room.occupancy_state === "Fully Occupied"
+        ).length,
         totalAllocations: allocationsRes.data.length,
       });
     };
@@ -45,7 +51,12 @@ function DashboardPage() {
         <StatCard label="Total Students" value={stats.totalStudents} accent="accent-blue" />
         <StatCard label="Total Rooms" value={stats.totalRooms} accent="accent-gold" />
         <StatCard label="Available Rooms" value={stats.availableRooms} accent="accent-green" />
-        <StatCard label="Occupied Rooms" value={stats.occupiedRooms} accent="accent-red" />
+        <StatCard
+          label="Partially Occupied"
+          value={stats.partiallyOccupiedRooms}
+          accent="accent-gold"
+        />
+        <StatCard label="Fully Occupied" value={stats.fullyOccupiedRooms} accent="accent-red" />
       </div>
 
       <div className="panel highlight-panel">

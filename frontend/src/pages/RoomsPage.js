@@ -123,8 +123,16 @@ function RoomsPage() {
               <div key={room.id} className="room-card">
                 <div className="room-card-header">
                   <h5>{room.room_number}</h5>
-                  <span className={`badge ${room.status === "Available" ? "badge-green" : "badge-red"}`}>
-                    {room.status}
+                  <span
+                    className={`badge ${
+                      room.occupancy_state === "Available"
+                        ? "badge-green"
+                        : room.occupancy_state === "Partially Occupied"
+                          ? "badge-gold"
+                          : "badge-red"
+                    }`}
+                  >
+                    {room.occupancy_state}
                   </span>
                 </div>
                 <p>{room.type} Room</p>

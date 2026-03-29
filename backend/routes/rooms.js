@@ -64,6 +64,12 @@ router.get("/", async (_req, res) => {
       rows.map((room) => ({
         ...room,
         capacity: ROOM_CAPACITY[room.type] || 1,
+        occupancy_state:
+          Number(room.allocated_students) === 0
+            ? "Available"
+            : Number(room.allocated_students) >= (ROOM_CAPACITY[room.type] || 1)
+              ? "Fully Occupied"
+              : "Partially Occupied",
       }))
     );
   } catch (error) {
