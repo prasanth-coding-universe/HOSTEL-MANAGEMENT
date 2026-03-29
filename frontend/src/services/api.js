@@ -10,11 +10,6 @@ export const studentApi = {
   remove: (id) => api.delete(`/students/${id}`),
 };
 
-export const authApi = {
-  signup: (payload) => api.post("/auth/signup", payload),
-  login: (payload) => api.post("/auth/login", payload),
-};
-
 export const roomApi = {
   getAll: () => api.get("/rooms"),
   create: (payload) => api.post("/rooms", payload),

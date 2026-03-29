@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard" },
@@ -9,13 +9,7 @@ const navItems = [
 ];
 
 function Layout() {
-  const navigate = useNavigate();
   const location = useLocation();
-
-  const handleLogout = () => {
-    localStorage.removeItem("hostel-auth");
-    navigate("/");
-  };
 
   const title = navItems.find((item) => item.path === location.pathname)?.label || "Hostel";
 
@@ -47,9 +41,6 @@ function Layout() {
             <span className="eyebrow">Hostel Management System</span>
             <h2>{title}</h2>
           </div>
-          <button className="ghost-button" type="button" onClick={handleLogout}>
-            Logout
-          </button>
         </header>
         <main className="page-content">
           <Outlet />

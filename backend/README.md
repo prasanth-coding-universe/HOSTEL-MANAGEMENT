@@ -9,8 +9,6 @@
 
 ## API Routes
 
-- `POST /api/auth/signup`
-- `POST /api/auth/login`
 - `POST /api/students`
 - `GET /api/students`
 - `DELETE /api/students/:id`

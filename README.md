@@ -15,7 +15,6 @@ Full-stack Hostel Management System built with:
 
 ## Features
 
-- Login page
 - Dashboard with summary cards
 - Students page with add, list, and delete
 - Rooms page with add and occupancy badges
@@ -57,11 +56,9 @@ Full-stack Hostel Management System built with:
 
 ## Notes
 
-- Users create their own account from the signup page, then log in with saved credentials.
+- The project focuses only on core hostel management operations.
 - The backend supports both local MySQL `.env` values and Railway MySQL variables.
 - Backend routes implemented:
-  - `POST /api/auth/signup`
-  - `POST /api/auth/login`
   - `POST /api/students`
   - `GET /api/students`
   - `DELETE /api/students/:id`
