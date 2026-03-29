@@ -83,8 +83,31 @@ async function initializeDatabase() {
       AND INDEX_NAME <> 'PRIMARY'
   `);
 
-  for (const index of roomUniqueIndexes) {
-    await pool.query(`ALTER TABLE Allocations DROP INDEX \`${index.INDEX_NAME}\``);
+  if (roomUniqueIndexes.length) {
+    const [roomForeignKeys] = await pool.query(`
+      SELECT CONSTRAINT_NAME
+      FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'Allocations'
+        AND COLUMN_NAME = 'room_id'
+        AND REFERENCED_TABLE_NAME = 'Rooms'
+    `);
+
+    for (const foreignKey of roomForeignKeys) {
+      await pool.query(`ALTER TABLE Allocations DROP FOREIGN KEY \`${foreignKey.CONSTRAINT_NAME}\``);
+    }
+
+    for (const index of roomUniqueIndexes) {
+      await pool.query(`ALTER TABLE Allocations DROP INDEX \`${index.INDEX_NAME}\``);
+    }
+
+    await pool.query(`
+      ALTER TABLE Allocations
+      ADD CONSTRAINT fk_allocations_room
+        FOREIGN KEY (room_id) REFERENCES Rooms(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+    `);
   }
 }
 
