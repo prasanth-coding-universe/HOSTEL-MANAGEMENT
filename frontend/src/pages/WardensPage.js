@@ -31,7 +31,13 @@ function WardensPage() {
       setAlert({ message: "Warden added successfully.", type: "success" });
       fetchWardens();
     } catch (error) {
-      setAlert({ message: error.response?.data?.message || "Unable to add warden.", type: "error" });
+      setAlert({
+        message:
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Unable to add warden.",
+        type: "error",
+      });
     }
   };
 

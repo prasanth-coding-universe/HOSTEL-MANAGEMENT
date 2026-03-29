@@ -43,7 +43,13 @@ function RoomsPage() {
       setAlert({ message: "Room added successfully.", type: "success" });
       fetchRooms();
     } catch (error) {
-      setAlert({ message: error.response?.data?.message || "Unable to add room.", type: "error" });
+      setAlert({
+        message:
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Unable to add room.",
+        type: "error",
+      });
     }
   };
 

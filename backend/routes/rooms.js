@@ -41,6 +41,7 @@ router.post("/", async (req, res) => {
 
     return res.status(201).json(rows[0]);
   } catch (error) {
+    console.error("Failed to add room:", error);
     return res.status(500).json({ message: "Failed to add room.", error: error.message });
   }
 });
@@ -66,6 +67,7 @@ router.get("/", async (_req, res) => {
       }))
     );
   } catch (error) {
+    console.error("Failed to fetch rooms:", error);
     return res.status(500).json({ message: "Failed to fetch rooms.", error: error.message });
   }
 });
@@ -102,6 +104,7 @@ router.put("/:id/warden", async (req, res) => {
 
     return res.json(rows[0]);
   } catch (error) {
+    console.error("Failed to assign warden:", error);
     return res.status(500).json({ message: "Failed to assign warden.", error: error.message });
   }
 });
