@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const pool = require("./config/db");
+const initializeDatabase = require("./config/initDb");
 const authRoutes = require("./routes/auth");
 const studentRoutes = require("./routes/students");
 const roomRoutes = require("./routes/rooms");
@@ -30,6 +31,16 @@ app.use("/api/rooms", roomRoutes);
 app.use("/api/wardens", wardenRoutes);
 app.use("/api/allocations", allocationRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+async function startServer() {
+  try {
+    await initializeDatabase();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to initialize database:", error.message);
+    process.exit(1);
+  }
+}
+
+startServer();
