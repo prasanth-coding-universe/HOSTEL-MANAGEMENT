@@ -40,6 +40,7 @@ router.post("/signup", async (req, res) => {
 
     return res.status(201).json({ message: "Account created successfully. Please log in." });
   } catch (error) {
+    console.error("Signup failed:", error);
     return res.status(500).json({ message: "Signup failed.", error: error.message });
   }
 });
@@ -81,6 +82,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Login failed:", error);
     return res.status(500).json({ message: "Login failed.", error: error.message });
   }
 });
