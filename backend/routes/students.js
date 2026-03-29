@@ -2,6 +2,11 @@ const express = require("express");
 const pool = require("../config/db");
 
 const router = express.Router();
+const ROOM_CAPACITY = {
+  Single: 1,
+  Double: 2,
+  Triple: 3,
+};
 
 router.post("/", async (req, res) => {
   try {
@@ -43,17 +48,48 @@ router.get("/", async (_req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
+  const connection = await pool.getConnection();
+
   try {
     const { id } = req.params;
-    const [result] = await pool.query("DELETE FROM Students WHERE id = ?", [id]);
+
+    await connection.beginTransaction();
+
+    const [allocationRows] = await connection.query(
+      `SELECT a.room_id, r.type
+       FROM Allocations a
+       JOIN Rooms r ON r.id = a.room_id
+       WHERE a.student_id = ?`,
+      [id]
+    );
+
+    const [result] = await connection.query("DELETE FROM Students WHERE id = ?", [id]);
 
     if (!result.affectedRows) {
+      await connection.rollback();
       return res.status(404).json({ message: "Student not found." });
     }
 
+    if (allocationRows.length) {
+      const { room_id: roomId, type } = allocationRows[0];
+      const capacity = ROOM_CAPACITY[type] || 1;
+      const [remainingRows] = await connection.query(
+        "SELECT COUNT(*) AS total FROM Allocations WHERE room_id = ?",
+        [roomId]
+      );
+      const remaining = remainingRows[0].total;
+      const nextStatus = remaining >= capacity ? "Occupied" : "Available";
+
+      await connection.query("UPDATE Rooms SET status = ? WHERE id = ?", [nextStatus, roomId]);
+    }
+
+    await connection.commit();
     return res.json({ message: "Student deleted successfully." });
   } catch (error) {
+    await connection.rollback();
     return res.status(500).json({ message: "Failed to delete student.", error: error.message });
+  } finally {
+    connection.release();
   }
 });
 
