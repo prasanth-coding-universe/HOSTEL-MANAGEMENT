@@ -18,6 +18,7 @@ export const authApi = {
 export const roomApi = {
   getAll: () => api.get("/rooms"),
   create: (payload) => api.post("/rooms", payload),
+  assignWarden: (id, payload) => api.put(`/rooms/${id}/warden`, payload),
 };
 
 export const wardenApi = {

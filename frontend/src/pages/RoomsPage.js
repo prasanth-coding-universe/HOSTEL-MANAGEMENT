@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import Alert from "../components/Alert";
 import PageHeader from "../components/PageHeader";
-import { roomApi } from "../services/api";
+import { roomApi, wardenApi } from "../services/api";
 
 function RoomsPage() {
   const [rooms, setRooms] = useState([]);
+  const [wardens, setWardens] = useState([]);
   const [formData, setFormData] = useState({
     room_number: "",
     type: "Single",
     status: "Available",
+    warden_id: "",
   });
   const [alert, setAlert] = useState({ message: "", type: "success" });
 
@@ -17,8 +19,14 @@ function RoomsPage() {
     setRooms(response.data);
   };
 
+  const fetchWardens = async () => {
+    const response = await wardenApi.getAll();
+    setWardens(response.data);
+  };
+
   useEffect(() => {
     fetchRooms().catch((error) => console.error("Rooms fetch failed:", error));
+    fetchWardens().catch((error) => console.error("Wardens fetch failed:", error));
   }, []);
 
   const handleChange = (event) => {
@@ -31,11 +39,24 @@ function RoomsPage() {
 
     try {
       await roomApi.create(formData);
-      setFormData({ room_number: "", type: "Single", status: "Available" });
+      setFormData({ room_number: "", type: "Single", status: "Available", warden_id: "" });
       setAlert({ message: "Room added successfully.", type: "success" });
       fetchRooms();
     } catch (error) {
       setAlert({ message: error.response?.data?.message || "Unable to add room.", type: "error" });
+    }
+  };
+
+  const handleWardenAssign = async (roomId, wardenId) => {
+    try {
+      await roomApi.assignWarden(roomId, { warden_id: wardenId || null });
+      setAlert({ message: "Warden assignment updated.", type: "success" });
+      fetchRooms();
+    } catch (error) {
+      setAlert({
+        message: error.response?.data?.message || "Unable to assign warden.",
+        type: "error",
+      });
     }
   };
 
@@ -72,6 +93,17 @@ function RoomsPage() {
                 <option value="Occupied">Occupied</option>
               </select>
             </label>
+            <label>
+              Assigned Warden
+              <select name="warden_id" value={formData.warden_id} onChange={handleChange}>
+                <option value="">Select warden</option>
+                {wardens.map((warden) => (
+                  <option key={warden.id} value={warden.id}>
+                    {warden.name}
+                  </option>
+                ))}
+              </select>
+            </label>
             <button className="primary-button" type="submit">
               Add Room
             </button>
@@ -91,6 +123,23 @@ function RoomsPage() {
                 </div>
                 <p>{room.type} Room</p>
                 <small>{room.allocated_students} student(s) allocated</small>
+                <p className="room-meta">
+                  Warden: {room.warden_name ? `${room.warden_name} (${room.warden_phone})` : "Not Assigned"}
+                </p>
+                <label className="compact-label">
+                  Change Warden
+                  <select
+                    value={room.warden_id || ""}
+                    onChange={(event) => handleWardenAssign(room.id, event.target.value)}
+                  >
+                    <option value="">Unassign</option>
+                    {wardens.map((warden) => (
+                      <option key={warden.id} value={warden.id}>
+                        {warden.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
             ))}
             {!rooms.length && <div className="empty-room-card">No rooms found.</div>}

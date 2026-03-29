@@ -67,6 +67,7 @@ function WardensPage() {
                   <strong>{warden.name}</strong>
                   <p>{warden.phone}</p>
                 </div>
+                <span className="badge badge-green">Available for Assignment</span>
               </div>
             ))}
             {!wardens.length && <div className="empty-state">No wardens found.</div>}

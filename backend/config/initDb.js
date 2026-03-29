@@ -53,6 +53,25 @@ async function initializeDatabase() {
         ON UPDATE CASCADE
     )
   `);
+
+  const [roomColumns] = await pool.query(`
+    SELECT COLUMN_NAME
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'Rooms'
+      AND COLUMN_NAME = 'warden_id'
+  `);
+
+  if (!roomColumns.length) {
+    await pool.query(`
+      ALTER TABLE Rooms
+      ADD COLUMN warden_id INT NULL,
+      ADD CONSTRAINT fk_rooms_warden
+        FOREIGN KEY (warden_id) REFERENCES Wardens(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+    `);
+  }
 }
 
 module.exports = initializeDatabase;

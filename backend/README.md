@@ -16,6 +16,7 @@
 - `DELETE /api/students/:id`
 - `POST /api/rooms`
 - `GET /api/rooms`
+- `PUT /api/rooms/:id/warden`
 - `POST /api/wardens`
 - `GET /api/wardens`
 - `POST /api/allocations`

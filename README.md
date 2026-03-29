@@ -20,6 +20,7 @@ Full-stack Hostel Management System built with:
 - Students page with add, list, and delete
 - Rooms page with add and occupancy badges
 - Wardens page with add and list
+- Room-to-warden assignment support for hostel supervision
 - Allocation page with student-room assignment dropdowns
 - Axios-based frontend API integration
 - Environment-variable-based backend database connection
@@ -66,6 +67,7 @@ Full-stack Hostel Management System built with:
   - `DELETE /api/students/:id`
   - `POST /api/rooms`
   - `GET /api/rooms`
+  - `PUT /api/rooms/:id/warden`
   - `POST /api/wardens`
   - `GET /api/wardens`
   - `POST /api/allocations`

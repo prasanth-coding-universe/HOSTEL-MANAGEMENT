@@ -17,17 +17,22 @@ CREATE TABLE IF NOT EXISTS Students (
   phone VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Rooms (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  room_number VARCHAR(20) NOT NULL UNIQUE,
-  type VARCHAR(50) NOT NULL,
-  status ENUM('Available', 'Occupied') NOT NULL DEFAULT 'Available'
-);
-
 CREATE TABLE IF NOT EXISTS Wardens (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   phone VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Rooms (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  room_number VARCHAR(20) NOT NULL UNIQUE,
+  type VARCHAR(50) NOT NULL,
+  status ENUM('Available', 'Occupied') NOT NULL DEFAULT 'Available',
+  warden_id INT NULL,
+  CONSTRAINT fk_rooms_warden
+    FOREIGN KEY (warden_id) REFERENCES Wardens(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Allocations (
