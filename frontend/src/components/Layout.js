@@ -18,8 +18,8 @@ function Layout() {
       <aside className="sidebar">
         <div>
           <div className="brand-mark">H</div>
-          <h1>HostelMS</h1>
-          <p>Stay organized, room by room.</p>
+          <h1>Green Valley Hostel</h1>
+          <p>Smart hostel operations, room by room.</p>
         </div>
 
         <nav className="sidebar-nav">
@@ -38,7 +38,7 @@ function Layout() {
       <div className="main-panel">
         <header className="topbar">
           <div>
-            <span className="eyebrow">Hostel Management System</span>
+            <span className="eyebrow">Green Valley Hostel</span>
             <h2>{title}</h2>
           </div>
         </header>
