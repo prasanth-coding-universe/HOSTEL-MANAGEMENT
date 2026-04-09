@@ -39,8 +39,8 @@ function LoginPage() {
       <div className="login-card">
         <div>
           <span className="eyebrow">Welcome Back</span>
-          <h1>Hostel Management System</h1>
-          <p>Log in with your registered email or username to access the dashboard.</p>
+          <h1>Staynix Hostel</h1>
+          <p>Log in with your registered email or username to access the admin dashboard.</p>
         </div>
 
         <form className="form-grid" onSubmit={handleSubmit}>

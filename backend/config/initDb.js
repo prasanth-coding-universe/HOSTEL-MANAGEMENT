@@ -2,6 +2,19 @@ const pool = require("./db");
 
 async function initializeDatabase() {
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS Users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      full_name VARCHAR(120) NOT NULL,
+      email VARCHAR(120) NOT NULL UNIQUE,
+      phone VARCHAR(20) NOT NULL,
+      username VARCHAR(80) UNIQUE,
+      password_hash VARCHAR(255) NOT NULL,
+      role VARCHAR(30) NOT NULL DEFAULT 'admin',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS Students (
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(100) NOT NULL,
@@ -95,6 +108,21 @@ async function initializeDatabase() {
         FOREIGN KEY (room_id) REFERENCES Rooms(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
+    `);
+  }
+
+  const [userRoleColumn] = await pool.query(`
+    SELECT COLUMN_NAME
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'Users'
+      AND COLUMN_NAME = 'role'
+  `);
+
+  if (!userRoleColumn.length) {
+    await pool.query(`
+      ALTER TABLE Users
+      ADD COLUMN role VARCHAR(30) NOT NULL DEFAULT 'admin'
     `);
   }
 }

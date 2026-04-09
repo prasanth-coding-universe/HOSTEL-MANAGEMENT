@@ -30,15 +30,17 @@ router.post("/signup", async (req, res) => {
       return res.status(409).json({ message: "An account with this email already exists." });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await pool.query(
-      `INSERT INTO Users (full_name, email, phone, username, password_hash)
-       VALUES (?, ?, ?, ?, ?)`,
-      [fullName, email, phone, username, hashedPassword]
+    const passwordHash = await bcrypt.hash(password, 10);
+    const [result] = await pool.query(
+      `INSERT INTO Users (full_name, email, phone, username, password_hash, role)
+       VALUES (?, ?, ?, ?, ?, 'admin')`,
+      [fullName, email, phone, username, passwordHash]
     );
 
-    return res.status(201).json({ message: "Account created successfully. Please log in." });
+    return res.status(201).json({
+      message: "Account created successfully. Please log in.",
+      id: result.insertId,
+    });
   } catch (error) {
     console.error("Signup failed:", error);
     return res.status(500).json({ message: "Signup failed.", error: error.message });
@@ -54,7 +56,7 @@ router.post("/login", async (req, res) => {
     }
 
     const [users] = await pool.query(
-      `SELECT id, full_name, email, phone, username, password_hash
+      `SELECT id, full_name, email, phone, username, role, password_hash
        FROM Users
        WHERE email = ? OR username = ?`,
       [identifier, identifier]
@@ -65,9 +67,9 @@ router.post("/login", async (req, res) => {
     }
 
     const user = users[0];
-    const passwordMatches = await bcrypt.compare(password, user.password_hash);
+    const isValid = await bcrypt.compare(password, user.password_hash);
 
-    if (!passwordMatches) {
+    if (!isValid) {
       return res.status(401).json({ message: "Invalid email/username or password." });
     }
 
@@ -79,6 +81,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
         phone: user.phone,
         username: user.username,
+        role: user.role,
       },
     });
   } catch (error) {

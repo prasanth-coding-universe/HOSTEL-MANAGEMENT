@@ -8,6 +8,7 @@ function AllocationPage() {
   const [rooms, setRooms] = useState([]);
   const [allocations, setAllocations] = useState([]);
   const [formData, setFormData] = useState({ student_id: "", room_id: "" });
+  const [searchTerm, setSearchTerm] = useState("");
   const [alert, setAlert] = useState({ message: "", type: "success" });
 
   const fetchData = async () => {
@@ -48,6 +49,17 @@ function AllocationPage() {
       });
     }
   };
+
+  const filteredAllocations = allocations.filter((allocation) => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return true;
+    return (
+      allocation.student_name.toLowerCase().includes(query) ||
+      allocation.phone.toLowerCase().includes(query) ||
+      allocation.room_number.toLowerCase().includes(query) ||
+      allocation.type.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <section>
@@ -98,6 +110,13 @@ function AllocationPage() {
 
         <div className="panel">
           <h4>Allocation Records</h4>
+          <div className="toolbar">
+            <input
+              placeholder="Search by student, phone, room, or type"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </div>
           <div className="table-wrap">
             <table>
               <thead>
@@ -110,7 +129,7 @@ function AllocationPage() {
                 </tr>
               </thead>
               <tbody>
-                {allocations.map((allocation) => (
+                {filteredAllocations.map((allocation) => (
                   <tr key={allocation.id}>
                     <td>{allocation.id}</td>
                     <td>{allocation.student_name}</td>
@@ -119,7 +138,7 @@ function AllocationPage() {
                     <td>{allocation.type}</td>
                   </tr>
                 ))}
-                {!allocations.length && (
+                {!filteredAllocations.length && (
                   <tr>
                     <td colSpan="5" className="empty-state">
                       No allocations found.

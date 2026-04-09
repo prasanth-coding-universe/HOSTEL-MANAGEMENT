@@ -6,6 +6,9 @@ import { wardenApi } from "../services/api";
 function WardensPage() {
   const [wardens, setWardens] = useState([]);
   const [formData, setFormData] = useState({ name: "", phone: "" });
+  const [editingId, setEditingId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("latest");
   const [alert, setAlert] = useState({ message: "", type: "success" });
 
   const fetchWardens = async () => {
@@ -26,9 +29,15 @@ function WardensPage() {
     event.preventDefault();
 
     try {
-      await wardenApi.create(formData);
+      if (editingId) {
+        await wardenApi.update(editingId, formData);
+        setAlert({ message: "Warden updated successfully.", type: "success" });
+      } else {
+        await wardenApi.create(formData);
+        setAlert({ message: "Warden added successfully.", type: "success" });
+      }
       setFormData({ name: "", phone: "" });
-      setAlert({ message: "Warden added successfully.", type: "success" });
+      setEditingId(null);
       fetchWardens();
     } catch (error) {
       setAlert({
@@ -39,6 +48,16 @@ function WardensPage() {
         type: "error",
       });
     }
+  };
+
+  const handleEdit = (warden) => {
+    setEditingId(warden.id);
+    setFormData({ name: warden.name, phone: warden.phone });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setFormData({ name: "", phone: "" });
   };
 
   const handleDelete = async (id) => {
@@ -57,6 +76,21 @@ function WardensPage() {
     }
   };
 
+  const filteredWardens = [...wardens]
+    .filter((warden) => {
+      const query = searchTerm.trim().toLowerCase();
+      if (!query) return true;
+      return (
+        warden.name.toLowerCase().includes(query) ||
+        warden.phone.toLowerCase().includes(query)
+      );
+    })
+    .sort((first, second) => {
+      if (sortBy === "name-asc") return first.name.localeCompare(second.name);
+      if (sortBy === "name-desc") return second.name.localeCompare(first.name);
+      return second.id - first.id;
+    });
+
   return (
     <section>
       <PageHeader title="Wardens" description="Maintain warden contact records." />
@@ -64,7 +98,7 @@ function WardensPage() {
 
       <div className="content-grid two-column">
         <div className="panel">
-          <h4>Add Warden</h4>
+          <h4>{editingId ? "Edit Warden" : "Add Warden"}</h4>
           <form className="form-grid" onSubmit={handleSubmit}>
             <label>
               Name
@@ -75,15 +109,32 @@ function WardensPage() {
               <input name="phone" value={formData.phone} onChange={handleChange} required />
             </label>
             <button className="primary-button" type="submit">
-              Add Warden
+              {editingId ? "Update Warden" : "Add Warden"}
             </button>
+            {editingId && (
+              <button className="ghost-button" type="button" onClick={handleCancelEdit}>
+                Cancel Edit
+              </button>
+            )}
           </form>
         </div>
 
         <div className="panel">
           <h4>Warden List</h4>
+          <div className="toolbar">
+            <input
+              placeholder="Search by warden name or phone"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+            <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+              <option value="latest">Latest First</option>
+              <option value="name-asc">Name A-Z</option>
+              <option value="name-desc">Name Z-A</option>
+            </select>
+          </div>
           <div className="list-stack">
-            {wardens.map((warden) => (
+            {filteredWardens.map((warden) => (
               <div key={warden.id} className="list-item">
                 <div>
                   <strong>{warden.name}</strong>
@@ -91,6 +142,9 @@ function WardensPage() {
                 </div>
                 <div className="warden-actions">
                   <span className="badge badge-green">Available for Assignment</span>
+                  <button className="ghost-button" type="button" onClick={() => handleEdit(warden)}>
+                    Edit
+                  </button>
                   <button
                     className="danger-button"
                     type="button"
@@ -101,7 +155,7 @@ function WardensPage() {
                 </div>
               </div>
             ))}
-            {!wardens.length && <div className="empty-state">No wardens found.</div>}
+            {!filteredWardens.length && <div className="empty-state">No wardens found.</div>}
           </div>
         </div>
       </div>

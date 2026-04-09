@@ -37,6 +37,33 @@ router.get("/", async (_req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, phone } = req.body;
+
+    if (!name || !phone) {
+      return res.status(400).json({ message: "Name and phone are required." });
+    }
+
+    const [result] = await pool.query("UPDATE Wardens SET name = ?, phone = ? WHERE id = ?", [
+      name,
+      phone,
+      id,
+    ]);
+
+    if (!result.affectedRows) {
+      return res.status(404).json({ message: "Warden not found." });
+    }
+
+    const [rows] = await pool.query("SELECT * FROM Wardens WHERE id = ?", [id]);
+    return res.json(rows[0]);
+  } catch (error) {
+    console.error("Failed to update warden:", error);
+    return res.status(500).json({ message: "Failed to update warden.", error: error.message });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;

@@ -15,12 +15,13 @@ Full-stack Hostel Management System built with:
 
 ## Features
 
+- Login and signup for admin/reception access
 - Dashboard with summary cards
-- Students page with add, list, and delete
-- Rooms page with add and occupancy badges
-- Wardens page with add and list
+- Students page with add, edit, search, sort, and delete
+- Rooms page with add, edit, search, filters, occupancy badges, and warden assignment
+- Wardens page with add, edit, search, sort, list, and delete
 - Room-to-warden assignment support for hostel supervision
-- Allocation page with student-room assignment dropdowns
+- Allocation page with student-room assignment dropdowns and searchable records
 - Axios-based frontend API integration
 - Environment-variable-based backend database connection
 
@@ -56,16 +57,22 @@ Full-stack Hostel Management System built with:
 
 ## Notes
 
-- The project focuses only on core hostel management operations.
+- The project supports protected admin access using a Users table.
 - The backend supports both local MySQL `.env` values and Railway MySQL variables.
 - Backend routes implemented:
+  - `POST /api/auth/signup`
+  - `POST /api/auth/login`
   - `POST /api/students`
   - `GET /api/students`
+  - `PUT /api/students/:id`
   - `DELETE /api/students/:id`
   - `POST /api/rooms`
   - `GET /api/rooms`
+  - `PUT /api/rooms/:id`
   - `PUT /api/rooms/:id/warden`
   - `POST /api/wardens`
   - `GET /api/wardens`
+  - `PUT /api/wardens/:id`
+  - `DELETE /api/wardens/:id`
   - `POST /api/allocations`
   - `GET /api/allocations`

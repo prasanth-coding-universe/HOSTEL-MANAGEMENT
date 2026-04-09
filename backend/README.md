@@ -9,13 +9,19 @@
 
 ## API Routes
 
+- `POST /api/auth/signup`
+- `POST /api/auth/login`
 - `POST /api/students`
 - `GET /api/students`
+- `PUT /api/students/:id`
 - `DELETE /api/students/:id`
 - `POST /api/rooms`
 - `GET /api/rooms`
+- `PUT /api/rooms/:id`
 - `PUT /api/rooms/:id/warden`
 - `POST /api/wardens`
 - `GET /api/wardens`
+- `PUT /api/wardens/:id`
+- `DELETE /api/wardens/:id`
 - `POST /api/allocations`
 - `GET /api/allocations`

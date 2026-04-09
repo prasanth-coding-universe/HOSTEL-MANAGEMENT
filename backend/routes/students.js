@@ -47,6 +47,40 @@ router.get("/", async (_req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, phone } = req.body;
+
+    if (!name || !phone) {
+      return res.status(400).json({ message: "Name and phone are required." });
+    }
+
+    const [result] = await pool.query("UPDATE Students SET name = ?, phone = ? WHERE id = ?", [
+      name,
+      phone,
+      id,
+    ]);
+
+    if (!result.affectedRows) {
+      return res.status(404).json({ message: "Student not found." });
+    }
+
+    const [rows] = await pool.query(
+      `SELECT s.id, s.name, s.phone, r.room_number
+       FROM Students s
+       LEFT JOIN Allocations a ON a.student_id = s.id
+       LEFT JOIN Rooms r ON r.id = a.room_id
+       WHERE s.id = ?`,
+      [id]
+    );
+
+    return res.json(rows[0]);
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to update student.", error: error.message });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   const connection = await pool.getConnection();
 

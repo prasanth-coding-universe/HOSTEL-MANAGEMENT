@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const pool = require("./config/db");
 const initializeDatabase = require("./config/initDb");
+const authRoutes = require("./routes/auth");
 const studentRoutes = require("./routes/students");
 const roomRoutes = require("./routes/rooms");
 const wardenRoutes = require("./routes/wardens");
@@ -24,6 +25,7 @@ app.get("/api/health", async (_req, res) => {
   }
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/wardens", wardenRoutes);

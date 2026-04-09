@@ -51,8 +51,8 @@ function SignUpPage() {
       <div className="login-card">
         <div>
           <span className="eyebrow">Create Account</span>
-          <h1>Sign Up</h1>
-          <p>Register first, then log in to access the hostel dashboard.</p>
+          <h1>Staynix Hostel Access</h1>
+          <p>Create an admin account first, then log in to manage hostel operations.</p>
         </div>
 
         <form className="form-grid" onSubmit={handleSubmit}>

@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard" },
@@ -9,9 +9,16 @@ const navItems = [
 ];
 
 function Layout() {
+  const navigate = useNavigate();
   const location = useLocation();
+  const user = JSON.parse(localStorage.getItem("hostel-user") || "null");
 
   const title = navItems.find((item) => item.path === location.pathname)?.label || "Hostel";
+  const handleLogout = () => {
+    localStorage.removeItem("hostel-auth");
+    localStorage.removeItem("hostel-user");
+    navigate("/");
+  };
 
   return (
     <div className="app-shell">
@@ -40,6 +47,15 @@ function Layout() {
           <div>
             <span className="eyebrow">Staynix Hostel</span>
             <h2>{title}</h2>
+          </div>
+          <div className="topbar-actions">
+            <div className="user-chip">
+              <strong>{user?.fullName || "Reception Admin"}</strong>
+              <span>{user?.role || "Hostel Staff"}</span>
+            </div>
+            <button className="ghost-button" type="button" onClick={handleLogout}>
+              Logout
+            </button>
           </div>
         </header>
         <main className="page-content">
