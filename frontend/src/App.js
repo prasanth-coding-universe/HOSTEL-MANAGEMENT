@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
@@ -9,7 +10,21 @@ import WardensPage from "./pages/WardensPage";
 import AllocationPage from "./pages/AllocationPage";
 
 function App() {
-  const isLoggedIn = localStorage.getItem("hostel-auth") === "true";
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("hostel-auth") === "true");
+
+  useEffect(() => {
+    const syncAuth = () => {
+      setIsLoggedIn(localStorage.getItem("hostel-auth") === "true");
+    };
+
+    window.addEventListener("storage", syncAuth);
+    window.addEventListener("hostel-auth-changed", syncAuth);
+
+    return () => {
+      window.removeEventListener("storage", syncAuth);
+      window.removeEventListener("hostel-auth-changed", syncAuth);
+    };
+  }, []);
 
   return (
     <Routes>

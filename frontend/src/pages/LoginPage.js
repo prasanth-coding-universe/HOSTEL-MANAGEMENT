@@ -22,7 +22,7 @@ function LoginPage() {
 
       localStorage.setItem("hostel-auth", "true");
       localStorage.setItem("hostel-user", JSON.stringify(response.data.user));
-      window.location.assign(`${window.location.origin}/#/dashboard`);
+      window.dispatchEvent(new Event("hostel-auth-changed"));
     } catch (apiError) {
       setError(
         apiError.response?.data?.error ||

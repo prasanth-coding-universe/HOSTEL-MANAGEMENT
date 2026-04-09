@@ -17,6 +17,7 @@ function Layout() {
   const handleLogout = () => {
     localStorage.removeItem("hostel-auth");
     localStorage.removeItem("hostel-user");
+    window.dispatchEvent(new Event("hostel-auth-changed"));
     navigate("/");
   };
 
