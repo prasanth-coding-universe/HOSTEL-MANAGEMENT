@@ -41,6 +41,22 @@ function WardensPage() {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await wardenApi.remove(id);
+      setAlert({ message: "Warden deleted successfully.", type: "success" });
+      fetchWardens();
+    } catch (error) {
+      setAlert({
+        message:
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Unable to delete warden.",
+        type: "error",
+      });
+    }
+  };
+
   return (
     <section>
       <PageHeader title="Wardens" description="Maintain warden contact records." />
@@ -73,7 +89,16 @@ function WardensPage() {
                   <strong>{warden.name}</strong>
                   <p>{warden.phone}</p>
                 </div>
-                <span className="badge badge-green">Available for Assignment</span>
+                <div className="warden-actions">
+                  <span className="badge badge-green">Available for Assignment</span>
+                  <button
+                    className="danger-button"
+                    type="button"
+                    onClick={() => handleDelete(warden.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
             {!wardens.length && <div className="empty-state">No wardens found.</div>}

@@ -37,4 +37,20 @@ router.get("/", async (_req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await pool.query("DELETE FROM Wardens WHERE id = ?", [id]);
+
+    if (!result.affectedRows) {
+      return res.status(404).json({ message: "Warden not found." });
+    }
+
+    return res.json({ message: "Warden deleted successfully." });
+  } catch (error) {
+    console.error("Failed to delete warden:", error);
+    return res.status(500).json({ message: "Failed to delete warden.", error: error.message });
+  }
+});
+
 module.exports = router;

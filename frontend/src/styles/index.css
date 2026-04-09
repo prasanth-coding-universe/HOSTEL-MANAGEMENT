@@ -431,6 +431,12 @@ th {
   font-weight: 600;
 }
 
+.warden-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 @media (max-width: 980px) {
   .app-shell {
     grid-template-columns: 1fr;

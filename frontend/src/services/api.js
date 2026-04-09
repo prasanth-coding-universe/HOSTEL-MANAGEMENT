@@ -19,6 +19,7 @@ export const roomApi = {
 export const wardenApi = {
   getAll: () => api.get("/wardens"),
   create: (payload) => api.post("/wardens", payload),
+  remove: (id) => api.delete(`/wardens/${id}`),
 };
 
 export const allocationApi = {
