@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { authApi } from "../services/api";
 
 function LoginPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ identifier: "", password: "" });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,7 +23,7 @@ function LoginPage() {
 
       localStorage.setItem("hostel-auth", "true");
       localStorage.setItem("hostel-user", JSON.stringify(response.data.user));
-      window.location.href = "/dashboard";
+      navigate("/dashboard", { replace: true });
     } catch (apiError) {
       setError(
         apiError.response?.data?.error ||
